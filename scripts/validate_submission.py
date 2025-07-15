@@ -24,8 +24,6 @@ def validate_time_check(UTC_time: int) -> bool:
 
     return asyncs_open <= UTC_time <= asyncs_close
 
-
-
 def validate_async_reg_count(current_asyncs_db: pd.DataFrame, allowed_asyncs: int = 2) -> bool:
 
     # ensure the entrant has not registered twice before
@@ -35,7 +33,7 @@ def validate_async_reg_count(current_asyncs_db: pd.DataFrame, allowed_asyncs: in
 async def validate_discord_id(discord_id: int) -> bool:
 
     intents = discord.Intents.default()
-    intents.members = True  # Need this to see members
+    intents.members = True
 
     client = discord.Client(intents=intents)
 
@@ -48,7 +46,6 @@ async def validate_discord_id(discord_id: int) -> bool:
     
     return user != "There is no user with this discord id."
     
-    
 def ensure_streamkey_is_available() -> str:
 
     return get_available_streamkey()
@@ -59,16 +56,9 @@ def validate_submission(
 
     if not validate_time_check(async_request.async_time_in_UTC):
         return INVALID_TIME
-    if not validate_discord_id(async_request.discord_id):   
-        # send error message to user
+    if not validate_discord_id(async_request.discord_id):
         return INVALID_DISCORD_ID
     if not validate_async_reg_count(async_request.discord_id):
-        # send error message to user
         return TOO_MANY_ASYNCS
-    if ensure_streamkey_is_available() == -1:
-        # send error message to user
+    if ensure_streamkey_is_available() == "":
         return STREAM_KEY_NOT_AVAILABLE
-
-
-    
-

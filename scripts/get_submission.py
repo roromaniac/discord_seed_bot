@@ -13,6 +13,7 @@ from pydantic import BaseModel
 from typing import List, Optional
 
 class Response(BaseModel):
+    timestamp_of_original_request: str
     async_time_in_UTC: int
     discord_id: int
     has_own_stream: bool
@@ -21,7 +22,7 @@ class Response(BaseModel):
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GOOGLE_SHEETS_CREDENTIALS_PATH = os.path.join(BASE_DIR, "credentials", "service_account.json")
 
-def get_submissions(last_recorded_index: int) -> List[dict]:
+def get_new_submissions(last_recorded_index: int) -> List[dict]:
     """
     This function returns all the new responses from the async sign up sheet.
     """
@@ -39,6 +40,7 @@ def get_submissions(last_recorded_index: int) -> List[dict]:
         print(records[i])
 
         submission = Response(**{
+            "timestamp_of_original_request": records[i]['Timestamp'],
             "async_time_in_UTC": int(records[i][ASYNC_TIME_QUESTION][3:-3]), # Convert to a timezone-aware datetime object in UTC
             "discord_id": records[i][DISCORD_ID_QUESTION],
             "has_own_stream": True if records[i][UNLISTED_STREAM_LINK_QUESTION] == "Yes" else False,
