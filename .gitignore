@@ -1,0 +1,7 @@
+.env
+credentials/
+seeds/
+data/
+TODO.md
+discord_seed_bot/
+ff3_env/
