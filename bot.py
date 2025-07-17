@@ -7,6 +7,8 @@ from scripts.validate_submission import validate_submission
 from scripts.data import add_submission_to_db
 from scripts.utils import async_qual_hasher, notify_async_participants, get_discord_username, get_available_streamkey, construct_message, send_message
 
+from logs.constants import INVALID_DISCORD_ID
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LOG_PATH = os.path.join(BASE_DIR, "logs", "last_processed_entry.txt")
 
@@ -18,6 +20,7 @@ async def process_async_submissions():
     async_submissions = get_new_submissions(last_recorded_index)
     
     for async_submission in async_submissions:
+        print("STARTING VALIDATION")
         error_code = await validate_submission(async_submission)
         print(error_code)
         seed_number = async_qual_hasher(discord_id=async_submission.discord_id)
@@ -37,9 +40,10 @@ async def process_async_submissions():
                 seed_number=seed_number
             )
         else:
-            ### SEND A MESSAGE TO USER INDICATING FAILURE.
-            message = construct_message(discord_name, message_type="initial", async_timestamp=async_submission.async_time_in_UTC, error_text=error_code)
-            await send_message(message, async_submission.discord_id)
+            if error_code != INVALID_DISCORD_ID:
+                ### SEND A MESSAGE TO USER INDICATING FAILURE.
+                message = construct_message(discord_name, message_type="initial", async_timestamp=async_submission.async_time_in_UTC, error_text=error_code)
+                await send_message(message, async_submission.discord_id)
 
     # once a minute (or something) send out the discord messages to anyone who submitted an async
     await notify_async_participants()
@@ -48,5 +52,10 @@ async def process_async_submissions():
     with open(LOG_PATH, "w") as f:
         f.write(str(last_recorded_index + len(async_submissions)))
 
+async def main():
+    while True:
+        await process_async_submissions()
+        await asyncio.sleep(60)  # Wait for 60 seconds before running again
+
 if __name__ == "__main__":
-    asyncio.run(process_async_submissions())
+    asyncio.run(main())

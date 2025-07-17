@@ -1,4 +1,6 @@
 import discord
+import asyncio
+import os
 
 class FetchUserClient(discord.Client):
     """
@@ -59,3 +61,15 @@ class SendUserImage(discord.Client):
         except discord.NotFound:
             print("There is no user with this discord id.")
         await self.close()  # This will stop client.start()
+
+async def get_discord_username(discord_id: int) -> bool:
+    intents = discord.Intents.default()
+    client = FetchUserClient(discord_id, intents=intents)
+    try:
+        await asyncio.wait_for(client.start(os.getenv("DISCORD_TOKEN")), timeout=2.5)
+    except asyncio.TimeoutError:
+        print("Timeout: Could not fetch user, possible invalid Discord ID.")
+        await client.close()
+        return None
+    await client.http.close()  # Explicitly close the HTTP session
+    return client.found_user

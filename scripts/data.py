@@ -41,7 +41,6 @@ def add_submission_to_db(discord_id, discord_name, async_time_timestamp, stream_
                 cur.execute(sql, (discord_id, discord_name, async_time_timestamp, stream_key, initial_notif, yt_live_notif, streaming_notif, seed_notif, seed_number))
                 # get the generated id back
                 rows = cur.fetchone()
-                print(rows)
                 if rows:
                     some_sort_of_id = rows[0]
                 # commit the changes to the database

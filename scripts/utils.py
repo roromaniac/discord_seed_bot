@@ -13,7 +13,7 @@ import datetime
 from typing import Optional
 
 from scripts.data import load_config, query_database
-from scripts.discord_client import FetchUserClient, SendUserMessage, SendUserImage
+from scripts.discord_client import FetchUserClient, SendUserMessage, SendUserImage, get_discord_username
 
 load_dotenv()
 
@@ -59,7 +59,7 @@ def construct_message(
         if error_text:
             message = (
                 f"Hello {discord_user},\n\n"
-                f"Thanks again for joining us for Fresh Faces 3! Your async qualifier is scheduled for {async_timestamp}.\n"
+                f"Thanks again for joining us for Fresh Faces 3! You attempted to schedule your async qualifier for {async_timestamp}.\n"
                 f"Unfortunately, something went wrong. We received the error code:\n\n"
                 f"{error_text}\n\n"
                 f"Please follow the instructions included **which may involve you resubmitting the async request form.**"
@@ -67,7 +67,7 @@ def construct_message(
         else:
             message = (
                 f"Hello {discord_user},\n\n"
-                f"Your async match is scheduled for {async_timestamp}.\n\n"
+                f"Your async is scheduled for {async_timestamp}.\n\n"
                 f"Congratulations! Your request has gone through successfully! Please note we will send you instructions for streaming 30 minutes prior to your async and the seed 15 minutes prior to your async."
             )
 
@@ -144,15 +144,13 @@ async def notify_async_participants(
     sql = """SELECT * FROM async_submissions.async_submissions"""
     async_submissions = query_database(sql)
     current_time = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
-    print(current_time)
 
     for async_submission in async_submissions:
 
         discord_id, discord_username, async_timestamp_str, stream_key, initial_notif, yt_live_notif, streaming_notif, seed_notif, seed_number = async_submission
 
         time_until_async = (int(async_timestamp_str[3:-3]) - current_time)
-        print(time_until_async)
-
+        
         message_type = None
         update_sql = None
         kwargs = {}
@@ -183,13 +181,6 @@ async def notify_async_participants(
                 await send_seed_png(file=discord.File(seed_png_filepath), recipient_id=discord_id)
             update_params = (True, discord_id, seed_number)
             query_database(update_sql, update_params)
-
-async def get_discord_username(discord_id: int) -> bool:
-    intents = discord.Intents.default()
-    client = FetchUserClient(discord_id, intents=intents)
-    await client.start(os.getenv("DISCORD_TOKEN"))
-    await client.http.close()  # Explicitly close the HTTP session
-    return client.found_user
 
 def is_our_async_account(stream_key: str):
 
