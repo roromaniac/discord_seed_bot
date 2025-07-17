@@ -112,9 +112,9 @@ def get_available_streamkey(hours_buffer: float=4.0) -> str:
     sql = """SELECT stream_key FROM async_submissions.async_submissions WHERE async_time_timestamp >= %s AND async_time_timestamp <= %s"""
     params = (f"<t:{start_time}:F>", f"<t:{end_time}:F>")
     overlapping_asyncs = query_database(sql, params)
-    for stream_key_in_use_at_async_time in overlapping_asyncs:
-        print(available_keys, stream_key_in_use_at_async_time)
-        available_keys.remove(stream_key_in_use_at_async_time)
+    for stream_key_in_use_at_async_time in overlapping_asyncs: # each one of these is a tuple
+        print(available_keys, stream_key_in_use_at_async_time[0])
+        available_keys.remove(stream_key_in_use_at_async_time[0])
     
     if len(available_keys) == 0:
         return ""

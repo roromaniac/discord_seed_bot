@@ -66,7 +66,7 @@ async def get_discord_username(discord_id: int) -> bool:
     intents = discord.Intents.default()
     client = FetchUserClient(discord_id, intents=intents)
     try:
-        await asyncio.wait_for(client.start(os.getenv("DISCORD_TOKEN")), timeout=2.5)
+        await asyncio.wait_for(client.start(os.getenv("DISCORD_TOKEN")), timeout=10)
     except asyncio.TimeoutError:
         print("Timeout: Could not fetch user, possible invalid Discord ID.")
         await client.close()

@@ -53,6 +53,7 @@ async def process_async_submissions():
         f.write(str(last_recorded_index + len(async_submissions)))
 
 async def main():
+    print("BOT IS LIVE")
     while True:
         await process_async_submissions()
         await asyncio.sleep(60)  # Wait for 60 seconds before running again

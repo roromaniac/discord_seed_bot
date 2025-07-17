@@ -38,12 +38,24 @@ def get_new_submissions(last_recorded_index: int) -> List[dict]:
 
         print(records[i])
 
-        submission = Response(**{
-            "async_time_in_UTC": records[i][ASYNC_TIME_QUESTION], # Convert to a timezone-aware datetime object in UTC
-            "discord_id": records[i][DISCORD_ID_QUESTION],
-            "has_own_stream": True if records[i][UNLISTED_STREAM_LINK_QUESTION] == "Yes" else False,
-            "unlisted_stream_link": records[i][UNLISTED_STREAM_LINK]
-        })
+        if type(records[i][DISCORD_ID_QUESTION]) == int:
+
+            submission = Response(**{
+                "async_time_in_UTC": records[i][ASYNC_TIME_QUESTION], # Convert to a timezone-aware datetime object in UTC
+                "discord_id": records[i][DISCORD_ID_QUESTION],
+                "has_own_stream": True if records[i][UNLISTED_STREAM_LINK_QUESTION] == "Yes" else False,
+                "unlisted_stream_link": records[i][UNLISTED_STREAM_LINK]
+            })
+
+        else:
+
+            submission = Response(**{
+                "async_time_in_UTC": records[i][ASYNC_TIME_QUESTION], # Convert to a timezone-aware datetime object in UTC
+                "discord_id": -1,
+                "has_own_stream": True if records[i][UNLISTED_STREAM_LINK_QUESTION] == "Yes" else False,
+                "unlisted_stream_link": records[i][UNLISTED_STREAM_LINK]
+            })
+
         submissions.append(submission)
     
     return submissions
