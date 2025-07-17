@@ -13,8 +13,7 @@ from pydantic import BaseModel
 from typing import List, Optional
 
 class Response(BaseModel):
-    timestamp_of_original_request: str
-    async_time_in_UTC: int
+    async_time_in_UTC: str
     discord_id: int
     has_own_stream: bool
     unlisted_stream_link: str
@@ -40,8 +39,7 @@ def get_new_submissions(last_recorded_index: int) -> List[dict]:
         print(records[i])
 
         submission = Response(**{
-            "timestamp_of_original_request": records[i]['Timestamp'],
-            "async_time_in_UTC": int(records[i][ASYNC_TIME_QUESTION][3:-3]), # Convert to a timezone-aware datetime object in UTC
+            "async_time_in_UTC": records[i][ASYNC_TIME_QUESTION], # Convert to a timezone-aware datetime object in UTC
             "discord_id": records[i][DISCORD_ID_QUESTION],
             "has_own_stream": True if records[i][UNLISTED_STREAM_LINK_QUESTION] == "Yes" else False,
             "unlisted_stream_link": records[i][UNLISTED_STREAM_LINK]

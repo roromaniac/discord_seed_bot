@@ -5,3 +5,9 @@ data/
 TODO.md
 discord_seed_bot/
 ff3_env/
+__pycache__/
+__pycache__/*
+*/__pycache__/*
+
+
+
