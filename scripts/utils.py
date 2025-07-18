@@ -74,7 +74,7 @@ def construct_message(
     elif message_type == "yt_live":
 
         message = (
-            "Hello! If you're receiving this message, it is because within 48 hours or less of this message, you will begin your async qualifier."
+            "Hello! If you're receiving this message, it is because within 48 hours or less of this message, you will begin your async qualifier. "
             f"We have it on record that you will be providing your OWN restream to us on an unlisted stream. The stream link we have for you at the moment is {stream_key} . "
             "We bring this up because we have observed in times past that if you have never streamed before, you need to request a stream key before you can stream which can take up to 24 hours. "
             "Please take the time to handle this now. If you need any assistance, please reach out to @Wallpesh or @Kallat."

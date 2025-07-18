@@ -50,7 +50,7 @@ def validate_nonoverlapping_existing_async(discord_id: int, new_async_timestamp:
 
     sql = """SELECT async_time_timestamp FROM async_submissions.async_submissions WHERE discord_id = %s"""
     asyncs_registered = query_database(sql, (discord_id,))
-    return all([abs(new_async_timestamp - int(x[0][3:-3])) <= overlap_in_seconds for x in asyncs_registered])
+    return all([abs(new_async_timestamp - int(x[0][3:-3])) > overlap_in_seconds for x in asyncs_registered])
     
 def ensure_streamkey_is_available() -> str:
 
