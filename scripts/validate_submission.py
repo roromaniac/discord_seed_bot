@@ -3,7 +3,7 @@ import datetime
 import discord
 import os
 import asyncio
-from scripts.get_submission import Response
+from scripts.models import Response
 
 from typing import Optional
 
@@ -16,7 +16,7 @@ from scripts.data import (
 )
 
 from logs.constants import (
-    TOO_MANY_ASYNCS, STREAM_KEY_NOT_AVAILABLE, INVALID_TIME, INVALID_DISCORD_ID, OVERLAPPING_ASYNC, INVALID_TIMESTAMP_NOTATION, NO_UNLISTED_STREAM_PROVIDED
+    TOO_MANY_ASYNCS, STREAM_KEY_NOT_AVAILABLE, INVALID_TIME, INVALID_DISCORD_ID, OVERLAPPING_ASYNC, INVALID_TIMESTAMP_NOTATION
 )
 
 from scripts.utils import get_discord_username
@@ -81,8 +81,6 @@ async def validate_submission(
     # ensure user actually used sesh.fyi
     if not validate_timestamp_notation(async_request.async_time_in_UTC):
         return INVALID_TIMESTAMP_NOTATION
-    if not validate_stream_link_provided(async_request.has_own_stream, async_request.unlisted_stream_link):
-        return NO_UNLISTED_STREAM_PROVIDED
     # if not validate_time_check(async_request.async_time_in_UTC):
     #     return INVALID_TIME
     if not validate_nonoverlapping_existing_async(async_request.discord_id, int(async_request.async_time_in_UTC[3:-3])):

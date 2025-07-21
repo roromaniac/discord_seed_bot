@@ -1,7 +1,7 @@
 import os
 import psycopg2
 from configparser import ConfigParser
-from scripts.get_submission import Response
+from scripts.models import Response
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ASYNC_DB_CREDENTIALS_PATH = os.path.join(BASE_DIR, "credentials", "database.ini")

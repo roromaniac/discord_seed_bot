@@ -33,14 +33,14 @@ async def send_seed_png(file: discord.File, recipient_id: int):
     await client.start(os.getenv("DISCORD_TOKEN"))
     await client.http.close()  # Explicitly close the HTTP session
 
-def get_streaming_text(stream_url: str, stream_key: Optional[str]):
-    if stream_url:
+def get_streaming_text(is_our_key: bool, stream_key: Optional[str]):
+    if is_our_key:
         return (
-            f"You have indicated you wish to stream to an UNLISTED channel on the channel with the URL ||{stream_url}||.\n\n"
+            f"The stream key you will be streaming to is \n\n||{stream_key}||\n\n"
         )
     else:
         return (
-            f"The stream key you will be streaming to is \n\n||{stream_key}||\n\n"
+            "You have indicated you wish to stream to an UNLISTED channel.\n\n"
         )
 
 def construct_message(
@@ -75,7 +75,7 @@ def construct_message(
 
         message = (
             "Hello! If you're receiving this message, it is because within 48 hours or less of this message, you will begin your async qualifier. "
-            f"We have it on record that you will be providing your OWN restream to us on an unlisted stream. The stream link we have for you at the moment is {stream_key} . "
+            f"We have it on record that you will be providing your OWN restream to us on an unlisted stream. "
             "We bring this up because we have observed in times past that if you have never streamed before, you need to request a stream key before you can stream which can take up to 24 hours. "
             "Please take the time to handle this now. If you need any assistance, please reach out to @Wallpesh or @Kallat."
         )
@@ -83,7 +83,7 @@ def construct_message(
     elif message_type == "streaming":
         message = (
             f"Hello! If you're receiving this message, it is because in 30 minutes, your async qualifier will begin! "
-            f"{get_streaming_text(stream_url=stream_key if not is_our_async_account(stream_key) else "", stream_key=stream_key)}\n"
+            f"{get_streaming_text(is_our_key=is_our_async_account(stream_key), stream_key=stream_key)}\n"
             f"Please ensure you go live to this channel with the following assets clearly visible and non-overlapping on your overlay: \n"
             f"- Tracker\n"
             f"- Loadless Timer (RTA Timer Helpful too)\n"

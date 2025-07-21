@@ -17,14 +17,14 @@ async def process_async_submissions():
     with open(LOG_PATH, "r") as f:
         last_recorded_index = int(f.read().strip())
     # get all NEW async form requests since last_recorded_index
-    async_submissions = get_new_submissions(last_recorded_index)
+    async_submissions = await get_new_submissions(last_recorded_index)
     
     for async_submission in async_submissions:
         print("STARTING VALIDATION")
         error_code = await validate_submission(async_submission)
         print(error_code)
         seed_number = async_qual_hasher(discord_id=async_submission.discord_id)
-        stream_key = get_available_streamkey() if async_submission.unlisted_stream_link == "" else async_submission.unlisted_stream_link
+        stream_key = get_available_streamkey() if not async_submission.has_own_stream else "YOUTUBE"
         discord_name = await get_discord_username(async_submission.discord_id)
 
         if error_code is None:
