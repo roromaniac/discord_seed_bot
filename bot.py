@@ -20,7 +20,7 @@ async def process_async_submissions():
     async_submissions = await get_new_submissions(last_recorded_index)
     
     for async_submission in async_submissions:
-        print("STARTING VALIDATION")
+        print("Bot Ready!")
         error_code = await validate_submission(async_submission)
         print(error_code)
         seed_number = async_qual_hasher(discord_id=async_submission.discord_id)

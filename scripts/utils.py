@@ -92,6 +92,8 @@ def construct_message(
         )
     elif message_type == "seed":
         message = (
+            "We are about to distribute the seed you need to play. Please be sure to FIRST fill out the [clock in form](https://docs.google.com/forms/d/e/1FAIpQLSdk4oddzoIT1OmTWWxXbWIHs4j-gqkzleeYz4zo4B03nc4lHA/viewform?usp=sharing&ouid=104590086266811208664). "
+            "**When you are finished**, please fill out the [clock out form](https://docs.google.com/forms/d/e/1FAIpQLSdmczhfZfWJcFZItRkrphO72ktI7bxUv_kvZ-bRH-br5RA2YA/viewform?usp=sharing&ouid=104590086266811208664). \n\n"
             "Below is your seed that you must load into the generator:\n\n"
         )
         with open(os.path.join(SEED_PATH, f"seed{seed_number}.txt"), "r") as file:

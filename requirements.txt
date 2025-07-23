@@ -18,7 +18,8 @@ executing==2.2.0
 frozenlist==1.7.0
 google-auth==2.40.3
 google-auth-oauthlib==1.2.2
-gspread==6.2.1
+# gspread==6.2.1
+gspread_asyncio
 idna==3.10
 ipykernel==6.29.5
 ipython==9.4.0

@@ -81,8 +81,8 @@ async def validate_submission(
     # ensure user actually used sesh.fyi
     if not validate_timestamp_notation(async_request.async_time_in_UTC):
         return INVALID_TIMESTAMP_NOTATION
-    # if not validate_time_check(async_request.async_time_in_UTC):
-    #     return INVALID_TIME
+    if not validate_time_check(async_request.async_time_in_UTC):
+        return INVALID_TIME
     if not validate_nonoverlapping_existing_async(async_request.discord_id, int(async_request.async_time_in_UTC[3:-3])):
         return OVERLAPPING_ASYNC
     if not await validate_discord_id(async_request.discord_id):
