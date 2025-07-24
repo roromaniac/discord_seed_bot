@@ -88,6 +88,7 @@ def construct_message(
             f"- Tracker\n"
             f"- Loadless Timer (RTA Timer Helpful too)\n"
             f"- KH2 Gameplay (won't be visible until you build the seed).\n\n"
+            f"- Your TWITCH username somewhere in the overlay."
             f"We will send you the seed to plug into your generator in 15 minutes!"
         )
     elif message_type == "seed":
