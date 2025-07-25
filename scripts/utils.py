@@ -116,10 +116,15 @@ def get_available_streamkey(hours_buffer: float=4.0) -> str:
     params = (f"<t:{start_time}:F>", f"<t:{end_time}:F>")
     overlapping_asyncs = query_database(sql, params)
     for stream_key_in_use_at_async_time in overlapping_asyncs: # each one of these is a tuple
-        print(available_keys, stream_key_in_use_at_async_time[0])
-        available_keys.remove(stream_key_in_use_at_async_time[0])
+        if not stream_key_in_use_at_async_time[0] == "YOUTUBE":
+            # try to remove the stream key if it hasn't been removed already
+            try:
+                print(available_keys, stream_key_in_use_at_async_time[0])
+                available_keys.remove(stream_key_in_use_at_async_time[0])
+            except ValueError:
+                continue
     
-    if len(available_keys) == 0:
+    if len(available_keys) == 0 and stream_key_in_use_at_async_time[0] != "YOUTUBE":
         return ""
     else:
         return random.choice(available_keys)
@@ -146,6 +151,8 @@ async def notify_async_participants(
     
     sql = """SELECT * FROM async_submissions.async_submissions"""
     async_submissions = query_database(sql)
+    if async_submissions is None:
+        return
     current_time = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
 
     for async_submission in async_submissions:

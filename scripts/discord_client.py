@@ -16,7 +16,7 @@ class FetchUserClient(discord.Client):
             user = await self.fetch_user(self.user_id)
             print(f"Recording user: {user}")
             self.found_user = user.name
-        except discord.NotFound:
+        except:
             print("There is no user with this discord id.")
         await self.close()  # This will stop client.start()
 
@@ -37,7 +37,7 @@ class SendUserMessage(discord.Client):
             self.found_user = user
             if self.found_user is not None:
                 await self.found_user.send(self.message)
-        except discord.NotFound:
+        except:
             print("There is no user with this discord id.")
         await self.close()  # This will stop client.start()
 

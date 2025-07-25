@@ -52,7 +52,10 @@ async def get_new_submissions(last_recorded_index: int) -> List[dict]:
         except:
             async_time_in_UTC = "ERRORED_TIME"
 
-        discord_id = records[i][DISCORD_ID_QUESTION] if type(records[i][DISCORD_ID_QUESTION]) == int else -1
+        try: 
+        	discord_id = int(records[i][DISCORD_ID_QUESTION])
+        except ValueError:
+            discord_id = -1
         has_own_stream = True if records[i][UNLISTED_STREAM_LINK_QUESTION] == "Yes" else False
 
         submission = Response(**{

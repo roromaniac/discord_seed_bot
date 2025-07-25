@@ -52,7 +52,10 @@ def validate_nonoverlapping_existing_async(discord_id: int, new_async_timestamp:
     asyncs_registered = query_database(sql, (discord_id,))
     return all([abs(new_async_timestamp - int(x[0][3:-3])) > overlap_in_seconds for x in asyncs_registered])
     
-def ensure_streamkey_is_available() -> str:
+def ensure_streamkey_is_available(has_own_stream: bool) -> str:
+
+    if has_own_stream:
+        return "YOUTUBE"
 
     return get_available_streamkey()
 
@@ -89,5 +92,5 @@ async def validate_submission(
         return INVALID_DISCORD_ID
     if not validate_async_reg_count(async_request.discord_id):
         return TOO_MANY_ASYNCS
-    if ensure_streamkey_is_available() == "":
+    if ensure_streamkey_is_available(async_request.has_own_stream) == "":
         return STREAM_KEY_NOT_AVAILABLE
