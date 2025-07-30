@@ -89,7 +89,13 @@ def construct_message(
             f"- Loadless Timer (RTA Timer Helpful too)\n"
             f"- KH2 Gameplay (won't be visible until you build the seed).\n\n"
             f"- Your TWITCH username somewhere in the overlay."
-            f"We will send you the seed to plug into your generator in 15 minutes!"
+            f"We will send you the seed to plug into your generator in 15 minutes!\n\n"
+            f"PLEASE remember to take a look at the original Fresh Faces 3 tournament announcement AND the subsequent forums for all rules/udpates. Some important ones (but not the only ones) to keep in mind are:\n"
+            f"- Please play on BEGINNER difficulty. Any other difficulty will DQ you.\n"
+            f"- TWNTW is JUNK in these settings. You gain access to final fights by finding 3 proofs + Promise Charm then talking to GoA computer.\n"
+            f"- You cannot hard for final form. You must either find final form, or trigger it with Light & Darkness.\n"
+            f"- Please do not let the title cutscene play. Just hit New Game and wait there if need be. If you let the cutscene play, the tracker tracks unlocks you don't have. Should this happen, restart your game and tracker.\n"
+            f"- If you are unsure your async is setup correctly, please ping the TO role in #async-help of the FF3 server.\n"
         )
     elif message_type == "seed":
         message = (
@@ -114,17 +120,17 @@ def get_available_streamkey(hours_buffer: float=4.0) -> str:
     end_time = current_utc_timestamp + 3600 * hours_buffer  # 4 hours after the current UTC timestamp
     sql = """SELECT stream_key FROM async_submissions.async_submissions WHERE async_time_timestamp >= %s AND async_time_timestamp <= %s"""
     params = (f"<t:{start_time}:F>", f"<t:{end_time}:F>")
-    overlapping_asyncs = query_database(sql, params)
+    overlapping_asyncs = set([x[0] for x in query_database(sql, params)])
     for stream_key_in_use_at_async_time in overlapping_asyncs: # each one of these is a tuple
-        if not stream_key_in_use_at_async_time[0] == "YOUTUBE":
+        if not stream_key_in_use_at_async_time == "YOUTUBE":
             # try to remove the stream key if it hasn't been removed already
             try:
-                print(available_keys, stream_key_in_use_at_async_time[0])
-                available_keys.remove(stream_key_in_use_at_async_time[0])
+                print(available_keys, stream_key_in_use_at_async_time)
+                available_keys.remove(stream_key_in_use_at_async_time)
             except ValueError:
                 continue
     
-    if len(available_keys) == 0 and stream_key_in_use_at_async_time[0] != "YOUTUBE":
+    if len(available_keys) == 0:
         return ""
     else:
         return random.choice(available_keys)
