@@ -26,7 +26,7 @@ def validate_time_check(UTC_time: int) -> bool:
     # extract timestamp int
     UTC_time = int(UTC_time[3:-3])
 
-    # ensure it is between the July 24, 12pm EDT and July 31, 10pm EDT
+    # ensure it is between the Aug 13, 00:00 EDT and Aug 16 09:00 EDT
     asyncs_open = 1755057600
     asyncs_close = 1755349200
 

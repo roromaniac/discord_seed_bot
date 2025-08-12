@@ -89,7 +89,13 @@ def construct_message(
             f"- Loadless Timer (RTA Timer Helpful too)\n"
             f"- KH2 Gameplay (won't be visible until you build the seed).\n\n"
             f"- Your TWITCH username somewhere in the overlay."
-            f"We will send you the seed to plug into your generator in 15 minutes!"
+            f"We will send you the seed to plug into your generator in 15 minutes!\n\n"
+            f"PLEASE remember to take a look at the original Fresh Faces 3 tournament announcement AND the subsequent forums for all rules/udpates. Some important ones (but not the only ones) to keep in mind are:\n"
+            f"- Please play on BEGINNER difficulty. Any other difficulty will DQ you.\n"
+            f"- TWNTW is JUNK in these settings. You gain access to final fights by finding 3 proofs + Promise Charm then talking to GoA computer.\n"
+            f"- You cannot hard for final form. You must either find final form, or trigger it with Light & Darkness.\n"
+            f"- Please do not let the title cutscene play. Just hit New Game and wait there if need be. If you let the cutscene play, the tracker tracks unlocks you don't have. Should this happen, restart your game and tracker.\n"
+            f"- If you are unsure your async is setup correctly, please ping the TO role in #async-help of the FF3 server.\n"
         )
     elif message_type == "seed":
         message = (
