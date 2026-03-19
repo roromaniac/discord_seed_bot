@@ -76,7 +76,7 @@ def construct_message(
         message = (
             "Hello! If you're receiving this message, it is because within 48 hours or less of this message, you will begin your async qualifier. "
             f"We have it on record that you will be providing your OWN restream to us on an unlisted stream. "
-            "We bring this up because we have observed in times past that if you have never streamed before, you need to request a stream key before you can stream which can take up to 24 hours. "
+            "We bring this up because we have observed in times past that if you have never streamed before, you need to request a stream key before you can stream which can take up to 24 hours to approve. "
             "Please take the time to handle this now. If you need any assistance, please reach out to @Wallpesh or @Kallat."
         )
     
@@ -144,9 +144,43 @@ def async_qual_hasher(discord_id, num_async_qualifiers=1) -> int:
     seeds = [x[0] for x in seeds]
     available_seeds = list(set(range(1, num_async_qualifiers+1)) - set(seeds))
     
-    return random.choice(available_seeds)
+    try:
+        return random.choice(available_seeds)
+    except IndexError:
+        return -1
+
+async def initialize_async_cache() -> list[dict]:
+    """
+    A function that initializes the message timers for the async participants.
+    """
+    sql = """SELECT * FROM async_submissions.async_submissions"""
+    async_submissions = query_database(sql)
+    if async_submissions is None:
+        return
+
+    async_cache = []
+
+    # retrive all async information from database
+    for async_submission in async_submissions:
+
+        discord_id, discord_username, async_timestamp_str, stream_key, initial_notif, yt_live_notif, streaming_notif, seed_notif, seed_number = async_submission
+
+        async_cache.append({
+            "discord_id": discord_id,
+            "discord_username": discord_username,
+            "async_timestamp_str": async_timestamp_str,
+            "stream_key": stream_key,
+            "initial_notif": initial_notif,
+            "yt_live_notif": yt_live_notif,
+            "streaming_notif": streaming_notif,
+            "seed_notif": seed_notif,
+            "seed_number": seed_number,
+        })
+
+    return async_cache
 
 async def notify_async_participants(
+        async_cache: list[dict],
         seconds_before_24_hour_YTLive_VERIFICATION: int = 48 * 60 * 60, # 48 hours, 60 mins/hr, 60 secs/min
         seconds_before_stream_instructions: int = 30 * 60, # 30 minutes, 60 secs/min
         seconds_before_seed_distribution: int = 15 * 60, # 15 minutes, 60 secs/min
@@ -154,49 +188,66 @@ async def notify_async_participants(
     """
         A function that sends all of the necessary async information to discord users who request an async.
     """
-    
-    sql = """SELECT * FROM async_submissions.async_submissions"""
-    async_submissions = query_database(sql)
-    if async_submissions is None:
-        return
-    current_time = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
 
-    for async_submission in async_submissions:
+    for async_submission in async_cache:
 
-        discord_id, discord_username, async_timestamp_str, stream_key, initial_notif, yt_live_notif, streaming_notif, seed_notif, seed_number = async_submission
-
-        time_until_async = (int(async_timestamp_str[3:-3]) - current_time)
+        current_time = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
+        time_until_async = int(async_submission["async_timestamp_str"][3:-3]) - current_time
         
         message_type = None
         update_sql = None
         kwargs = {}
 
-        if not initial_notif:
+        if not async_submission["initial_notif"]:
             message_type = "initial"
-            # Update the async_submission status in the database
             update_sql = """UPDATE async_submissions.async_submissions SET initial_notif = %s WHERE discord_id = %s AND seed_number = %s"""
-        elif not yt_live_notif and time_until_async <= seconds_before_24_hour_YTLive_VERIFICATION and not is_our_async_account(stream_key):
+            async_submission["initial_notif"] = True
+        elif (
+            not async_submission["yt_live_notif"]
+            and time_until_async <= seconds_before_24_hour_YTLive_VERIFICATION
+            and not is_our_async_account(async_submission["stream_key"])
+        ):
             message_type = "yt_live"
             update_sql = """UPDATE async_submissions.async_submissions SET yt_live_notif = %s WHERE discord_id = %s AND seed_number = %s"""
-            kwargs = {"stream_key": stream_key}
-        elif not streaming_notif and time_until_async <= seconds_before_stream_instructions:
+            kwargs = {"stream_key": async_submission["stream_key"]}
+            async_submission["yt_live_notif"] = True
+        elif (
+            not async_submission["streaming_notif"]
+            and time_until_async <= seconds_before_stream_instructions
+        ):
             message_type = "streaming"
             update_sql = """UPDATE async_submissions.async_submissions SET streaming_notif = %s WHERE discord_id = %s AND seed_number = %s"""
-            kwargs = {"stream_key": stream_key}
-        elif not seed_notif and time_until_async <= seconds_before_seed_distribution:
+            kwargs = {"stream_key": async_submission["stream_key"]}
+            async_submission["streaming_notif"] = True
+        elif (
+            not async_submission["seed_notif"]
+            and time_until_async <= seconds_before_seed_distribution
+        ):
             message_type = "seed"
             update_sql = """UPDATE async_submissions.async_submissions SET seed_notif = %s WHERE discord_id = %s AND seed_number = %s"""
-            kwargs = {"seed_number": seed_number}
+            kwargs = {"seed_number": async_submission["seed_number"]}
+            async_submission["seed_notif"] = True
 
         if message_type is not None and update_sql is not None:
-    
-            message = construct_message(discord_username, message_type=message_type, async_timestamp=async_timestamp_str, error_text="", **kwargs)
-            await send_message(message, discord_id)
+            message = construct_message(
+                async_submission["discord_username"],
+                message_type=message_type,
+                async_timestamp=async_submission["async_timestamp_str"],
+                error_text="",
+                **kwargs,
+            )
+            await send_message(message, async_submission["discord_id"])
             if message_type == "seed":
-                seed_png_filepath = os.path.join(SEED_PATH, f"seed{seed_number}.png")
-                await send_seed_png(file=discord.File(seed_png_filepath), recipient_id=discord_id)
-            update_params = (True, discord_id, seed_number)
+                seed_png_filepath = os.path.join(SEED_PATH, f"seed{async_submission['seed_number']}.png")
+                await send_seed_png(
+                    file=discord.File(seed_png_filepath),
+                    recipient_id=async_submission["discord_id"],
+                )
+            
+            update_params = (True, async_submission["discord_id"], async_submission["seed_number"])
             query_database(update_sql, update_params)
+
+    return async_cache
 
 def is_our_async_account(stream_key: str):
 

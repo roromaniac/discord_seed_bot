@@ -16,7 +16,14 @@ from scripts.data import (
 )
 
 from logs.constants import (
-    TOO_MANY_ASYNCS, STREAM_KEY_NOT_AVAILABLE, INVALID_TIME, INVALID_DISCORD_ID, OVERLAPPING_ASYNC, INVALID_TIMESTAMP_NOTATION
+    TOO_MANY_ASYNCS, 
+    STREAM_KEY_NOT_AVAILABLE, 
+    INVALID_TIME, 
+    INVALID_DISCORD_ID, 
+    OVERLAPPING_ASYNC, 
+    INVALID_TIMESTAMP_NOTATION,
+    ASYNC_OPEN_TIME,
+    ASYNC_CLOSE_TIME,
 )
 
 from scripts.utils import get_discord_username
@@ -27,10 +34,7 @@ def validate_time_check(UTC_time: int) -> bool:
     UTC_time = int(UTC_time[3:-3])
 
     # ensure it is between the Aug 13, 00:00 EDT and Aug 16 09:00 EDT
-    asyncs_open = 1755057600
-    asyncs_close = 1755349200
-
-    return asyncs_open <= UTC_time <= asyncs_close
+    return ASYNC_OPEN_TIME <= UTC_time <= ASYNC_CLOSE_TIME
 
 def validate_async_reg_count(discord_id: int, allowed_asyncs: int = 2) -> bool:
 

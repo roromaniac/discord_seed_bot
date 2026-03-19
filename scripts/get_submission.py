@@ -6,7 +6,8 @@ from logs.constants import (
     ASYNC_TIME_QUESTION,
     DISCORD_ID_QUESTION,
     UNLISTED_STREAM_LINK_QUESTION,
-    INVALID_TIMESTAMP_NOTATION
+    INVALID_TIMESTAMP_NOTATION,
+    SUBMISSION_SHEET_NAME
 )
 
 from scripts.models import Response
@@ -36,7 +37,7 @@ async def get_new_submissions(last_recorded_index: int) -> List[dict]:
     This function returns all the new responses from the async sign up sheet.
     """
     agc = await agcm.authorize()
-    sh = await agc.open("Fresh Faces 3 Async Form (Responses)")
+    sh = await agc.open(SUBMISSION_SHEET_NAME)
     worksheet = await sh.get_worksheet(0)  # 0 = first sheet
 
     records = await worksheet.get_all_records()
