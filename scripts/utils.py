@@ -135,19 +135,46 @@ def get_available_streamkey(hours_buffer: float=4.0) -> str:
     else:
         return random.choice(available_keys)
     
-def async_qual_hasher(discord_id, num_async_qualifiers=1) -> int:
-
-    # check what async qual seeds are available for a user by connecting to db
-    sql = """SELECT seed_number FROM async_submissions.async_submissions WHERE discord_id = %s"""
-    params = (discord_id,)
-    seeds = query_database(sql, params)
+def async_qual_hasher(discord_id, num_async_qualifiers=8) -> int:
+    # Find the seeds this user has already participated in.
+    sql = """
+        SELECT seed_number
+        FROM async_submissions.async_submissions
+        WHERE discord_id = %s
+    """
+    seeds = query_database(sql, (discord_id,))
     seeds = [x[0] for x in seeds]
-    available_seeds = list(set(range(1, num_async_qualifiers+1)) - set(seeds))
-    
-    try:
-        return random.choice(available_seeds)
-    except IndexError:
+
+    # Keep the existing eligibility logic.
+    available_seeds = list(
+        set(range(1, num_async_qualifiers + 1)) - set(seeds)
+    )
+
+    if not available_seeds:
         return -1
+
+    # Count unique participants in each qualifier.
+    counts_sql = """
+        SELECT seed_number, COUNT(DISTINCT discord_id)
+        FROM async_submissions.async_submissions
+        GROUP BY seed_number
+    """
+    participant_counts = dict(query_database(counts_sql, ()))
+
+    # Find the minimum count among eligible qualifiers.
+    # Missing qualifiers have no participants, so their count is zero.
+    minimum_count = min(
+        participant_counts.get(seed, 0)
+        for seed in available_seeds
+    )
+
+    least_populated_seeds = [
+        seed
+        for seed in available_seeds
+        if participant_counts.get(seed, 0) == minimum_count
+    ]
+
+    return random.choice(least_populated_seeds)
 
 async def initialize_async_cache() -> list[dict]:
     """

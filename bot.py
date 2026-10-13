@@ -17,6 +17,8 @@ from scripts.utils import (
 
 from logs.constants import INVALID_DISCORD_ID
 
+from populate_qualifiers import main as populate_qualifiers_main
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LOG_PATH = os.path.join(BASE_DIR, "logs", "last_processed_entry.txt")
 
@@ -77,10 +79,12 @@ async def process_async_submissions(async_cache: list[dict]):
 
 async def main():
     print("BOT IS LIVE")
-    async_cache = await initialize_async_cache()
+    # async_cache = await initialize_async_cache()
     while True:
-        async_cache = await process_async_submissions(async_cache)
-        await asyncio.sleep(60)  # Wait for 60 seconds before running again
+        # async_cache = await process_async_submissions(async_cache)
+        # Run populate_qualifiers_main after processing async submissions
+        populate_qualifiers_main()
+        await asyncio.sleep(15)  # Wait for 60 seconds before running again
 
 if __name__ == "__main__":
     asyncio.run(main())

@@ -36,7 +36,7 @@ def validate_time_check(UTC_time: int) -> bool:
     # ensure it is between the Aug 13, 00:00 EDT and Aug 16 09:00 EDT
     return ASYNC_OPEN_TIME <= UTC_time <= ASYNC_CLOSE_TIME
 
-def validate_async_reg_count(discord_id: int, allowed_asyncs: int = 2) -> bool:
+def validate_async_reg_count(discord_id: int, allowed_asyncs: int = 3) -> bool:
 
     # ensure the entrant has not registered twice before
     # some sql code that checks how many times they have signed up before (ACCOUNT FOR INVALID SUBMISSIONS)
