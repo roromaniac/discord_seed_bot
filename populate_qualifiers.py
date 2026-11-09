@@ -214,7 +214,6 @@ def main():
 
         # Google Sheets may omit trailing blank cells.
         values = [row + [""] * (len(columns) - len(row)) for row in values]
-
         qual_df = pd.DataFrame(values, columns=columns)
         qualifier_population(qual_df, creds)
     except HttpError as err:

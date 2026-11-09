@@ -78,13 +78,17 @@ async def process_async_submissions(async_cache: list[dict]):
     return new_async_cache
 
 async def main():
+    COUNTER = 0
     print("BOT IS LIVE")
-    # async_cache = await initialize_async_cache()
+    async_cache = await initialize_async_cache()
     while True:
-        # async_cache = await process_async_submissions(async_cache)
+        COUNTER += 1
+        if COUNTER == 6:
+            async_cache = await process_async_submissions(async_cache)
+            COUNTER = 0
         # Run populate_qualifiers_main after processing async submissions
         populate_qualifiers_main()
-        await asyncio.sleep(15)  # Wait for 60 seconds before running again
+        await asyncio.sleep(10)  # Wait for 60 seconds before running again
 
 if __name__ == "__main__":
     asyncio.run(main())

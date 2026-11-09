@@ -8,7 +8,7 @@ UNLISTED_STREAM_LINK_QUESTION = 'Do you have your own unlisted YouTube channel y
 INVALID_DISCORD_ID = "DISCORD_ID_ERROR: There is no user with this discord id."
 INVALID_TIME = "INVALID_TIME_ERROR: The async must be between Oct 19 10:00 Eastern and Nov 5 10:30 Eastern. Please fill out the form again."
 TOO_MANY_ASYNCS = "TOO_MANY_ASYNCS_ERROR: You have already played in the maximum number of allowed asyncs."
-STREAM_KEY_NOT_AVAILABLE = "NO_STREAM_KEYS_AVAILABLE: There are no stream keys available at this time. Please DM a Fresh Faces 3 TO to get this resolved ASAP."
+STREAM_KEY_NOT_AVAILABLE = "NO_STREAM_KEYS_AVAILABLE: There are no stream keys available at this time. Please DM a Fresh Faces 4 TO to get this resolved ASAP."
 OVERLAPPING_ASYNC = 'OVERLAPPING_ASYNC_ERROR: Please allow for at least 3 hours in between async starts. You seem to have another async that is within 3 hours of the one you just requested. Please resubmit the form with a different time for the async AT LEAST 3 hours away from your first async.'
 INVALID_TIMESTAMP_NOTATION = 'INVALID_TIMESTAMP_ERROR: Please ensure you used the [sesh.fyi/timestamp](https://sesh.fyi/timestamp/) tool as linked in the form and provide the time in <t:(TIMESTAMP):f> format.'
 

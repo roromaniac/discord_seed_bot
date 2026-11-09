@@ -1,7 +1,6 @@
 import discord
 import os
 import random
-import psycopg2
 import datetime
 import pandas as pd
 from copy import deepcopy
@@ -59,7 +58,7 @@ def construct_message(
         if error_text:
             message = (
                 f"Hello {discord_user},\n\n"
-                f"Thanks again for joining us for Fresh Faces 3! You attempted to schedule your async qualifier for {async_timestamp}.\n"
+                f"Thanks again for joining us for Fresh Faces 4! You attempted to schedule your async qualifier for {async_timestamp}.\n"
                 f"Unfortunately, something went wrong. We received the error code:\n\n"
                 f"{error_text}\n\n"
                 f"Please follow the instructions included **which may involve you resubmitting the async request form.**"
@@ -85,17 +84,17 @@ def construct_message(
             f"Hello! If you're receiving this message, it is because in 30 minutes, your async qualifier will begin! "
             f"{get_streaming_text(is_our_key=is_our_async_account(stream_key), stream_key=stream_key)}\n"
             f"Please ensure you go live to this channel with the following assets clearly visible and non-overlapping on your overlay: \n"
-            f"- Tracker\n"
+            f"- Tracker: VERSION '2.7.3-FF' REQUIRED. **Any other version will DQ you.**\n"
             f"- Loadless Timer (RTA Timer Helpful too)\n"
-            f"- KH2 Gameplay (won't be visible until you build the seed).\n\n"
-            f"- Your TWITCH username somewhere in the overlay."
+            f"- KH2 Gameplay (won't be visible until you build the seed).\n"
+            f"- Your TWITCH username somewhere in the overlay.\n\n"
             f"We will send you the seed to plug into your generator in 15 minutes!\n\n"
-            f"PLEASE remember to take a look at the original Fresh Faces 3 tournament announcement AND the subsequent forums for all rules/udpates. Some important ones (but not the only ones) to keep in mind are:\n"
+            f"PLEASE remember to take a look at the original Fresh Faces 4 tournament announcement AND the subsequent forums for all rules/udpates. Some important ones (but not the only ones) to keep in mind are:\n"
             f"- Please play on BEGINNER difficulty. Any other difficulty will DQ you.\n"
             f"- TWNTW is JUNK in these settings. You gain access to final fights by finding 3 proofs + Promise Charm then talking to GoA computer.\n"
-            f"- You cannot hard for final form. You must either find final form, or trigger it with Light & Darkness.\n"
+            f"- You cannot hard force final form. You must either find final form, or trigger it with Light & Darkness.\n"
             f"- Please do not let the title cutscene play. Just hit New Game and wait there if need be. If you let the cutscene play, the tracker tracks unlocks you don't have. Should this happen, restart your game and tracker.\n"
-            f"- If you are unsure your async is setup correctly, please ping the TO role in #async-help of the FF3 server.\n"
+            f"- If you are unsure your async is setup correctly, please ping the TO role in #async-help of the FF4 server.\n"
         )
     elif message_type == "seed":
         message = (
@@ -104,7 +103,7 @@ def construct_message(
             "Below is your seed that you must load into the generator:\n\n"
         )
         with open(os.path.join(SEED_PATH, f"seed{seed_number}.txt"), "r") as file:
-            seed_content = file.read()
+            seed_content = "```" + file.read() + "```"
         message += seed_content + "\n\n"
         message += "You can load this into your generator by copying the FULL seed string and going to Share Seed -> Load Seed from Clipboard."
         message += "\n\n"

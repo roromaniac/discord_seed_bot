@@ -1,0 +1,2 @@
+python -c "import sqlite3; con = sqlite3.connect(r'c:\Users\Owner\Downloads\async_results.db'); print(con.execute('PRAGMA wal_checkpoint(TRUNCATE)').fetchone()); print('rows', con.execute('select count(*) from async_submissions').fetchone()[0]); con.close()"
+(0, 0, 0)
